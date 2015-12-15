@@ -18,40 +18,48 @@ class EnigmaTest < Minitest::Test
 
 #original five digit number is converted to ABCD format
   def test_converts_five_digit_key_to_ABCD_format
-    skip
+    # skip
     # key_array = KeyGeneratingMachine.new
-    variable = Runner.new(["0", "1", "2", "3", "4"])
-    variable.key_to_abcd(["0", "1", "2", "3", "4"])
-    assert_equal 2, variable.count
+    runner = Runner.new(["0", "1", "2", "3", "4"])
+    runner.key_to_abcd
+    assert_equal "01", runner.a_1
   end
 
 #Calculates date by number
   def test_date_is_converted_to_number_form
     #skip
-    date = Runner.new(["0", "1", "2", "3", "4"])
-    assert_equal false, date.date_to_number_format.include?(".")
+    runner = Runner.new(["0", "1", "2", "3", "4"])
+    refute_equal Time, runner.date_to_number_format.class
   end
 
 #Date is squared
   def test_date_is_squared
     # skip
-    date = 123085
-    assert_equal "15149917225", date.square_date("123085")
+    runner = Runner.new(["0", "1", "2", "3", "4"])
+    assert_equal "15149917225", runner.square_date("123085")
   end
 
 #Last four digits of squared number become ABCD
   def test_that_ABCD_is_squared_numbers_last_four_digits
-    skip
-    date = Runner.new(["0", "1", "2", "3", "4"])
-    assert_equal 7225, @new_date.square_to_offset(15149917225)
+    # skip
+    runner = Runner.new(["0", "1", "2", "3", "4"])
+    runner.square_date("123085")
+    runner.square_to_offset
+    assert_equal "7", runner.a_2
+    assert_equal "2", runner.b_2 #don't need to make instance here
   end
 
 
 #two ABCD numbers are added together
   def test_add_two_ABCD_numbers_together
-    skip
     final_a = Runner.new(["0", "1", "2", "3", "4"])
-    assert_equal 52, final_a.add_abcds
+    final_a.key_to_abcd
+    final_a.square_date("123085")
+    final_a.square_to_offset
+    final_a.add_abcds
+    #assert_equal 8, final_a.rotation_a
+    assert_equal 39, final_a.rotation_d
+    #in order for rotation_a to happen, all these other methods need to happen
   end
 
   #A letter is properly organized into its number equivalent
@@ -63,16 +71,22 @@ class EnigmaTest < Minitest::Test
 
   #A message is properly organized into its number equivalent
   def test_properly_organizes_a_message_into_numbers
-    skip
-    message = Runner.new("an apple")
-    assert_equal "0 13 36 0 15 15 11 4 ", message.encrypt("an apple")
+    # skip
+    message = Runner.new(["0", "1", "2", "3", "4"])
+    assert_equal "0 15 15 11 4", message.encrypt("apple")
   end
 
 #message in character form is organized in ABCD format
   def test_organizes_character_message_in_ABCD_format
     skip
-    numbered_message = ["7", "14", "17", "0", "2", "4"]
-    assert_equal ["57", "31", "71", "26", "52", "21"], numbered_message.rotate
+    message = Runner.new(["0", "1", "2", "3", "4"])
+    message.key_to_abcd
+    message.square_date("123085")
+    message.square_to_offset
+    message.add_abcds
+    message.encrypt("apple")
+    message.abcd_assignment("apple")
+    assert_equal ["57", "31", "71", "26", "52", "21"], message.add_abcds_again_rotate
   end
 
 #message is converted into encrytped message using remainder of 39 character system
