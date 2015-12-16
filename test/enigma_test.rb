@@ -5,6 +5,7 @@ require 'minitest/pride'
 require 'pry'
 require_relative '../lib/key_generating_machine'
 require_relative '../lib/runner'
+SimpleCov.start
 
 class EnigmaTest < Minitest::Test
 
@@ -46,8 +47,8 @@ class EnigmaTest < Minitest::Test
   def test_that_ABCD_is_squared_numbers_last_four_digits
     # skip
     runner = Runner.new(["0", "1", "2", "3", "4"])
-    runner.square_date("123085")
-    offsets = runner.square_to_offset
+    new_date = runner.square_date("123085")
+    offsets = runner.square_to_offset(new_date)
     assert_equal "7", offsets[0]
     assert_equal "2", offsets[1] #don't need to make instance here
   end
@@ -57,11 +58,12 @@ class EnigmaTest < Minitest::Test
   def test_add_two_ABCD_numbers_together
     final_a = Runner.new(["0", "1", "2", "3", "4"])
     many_as = final_a.key_to_abcd
-    final_a.square_date("123085")
-    date_rotations = final_a.square_to_offset
+    new_date = final_a.square_date("123085")
+    date_rotations = final_a.square_to_offset(new_date)
     final_a.add_abcds(many_as, date_rotations)
     #assert_equal 8, final_a.rotation_a
     assert_equal 39, final_a.rotation_d
+                     rotation_array[0] + final_a
     #in order for rotation_a to happen, all these other methods need to happen
   end
 
@@ -84,8 +86,8 @@ class EnigmaTest < Minitest::Test
     # skip
     message = Runner.new(["0", "1", "2", "3", "4"])
     many_as = message.key_to_abcd
-    message.square_date("123085")
-    date_rotations = message.square_to_offset
+    new_date = message.square_date("123085")
+    date_rotations = message.square_to_offset(new_date)
     message.add_abcds(many_as, date_rotations)
     message.encrypt("apple")
     message.abcd_assignment("apple")
