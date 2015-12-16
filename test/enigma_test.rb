@@ -2,6 +2,7 @@ gem 'minitest', '~> 5.2'
 require_relative 'test_helper'
 require 'minitest/autorun'
 require 'minitest/pride'
+require 'pry'
 require_relative '../lib/key_generating_machine'
 require_relative '../lib/runner'
 
@@ -22,8 +23,9 @@ class EnigmaTest < Minitest::Test
     # skip
     # key_array = KeyGeneratingMachine.new
     runner = Runner.new(["0", "1", "2", "3", "4"])
-    runner.key_to_abcd
-    assert_equal "01", runner.a_1
+    many_as = runner.key_to_abcd
+    a_1 = many_as[0]
+    assert_equal "01", a_1
   end
 
 #Calculates date by number
@@ -45,19 +47,19 @@ class EnigmaTest < Minitest::Test
     # skip
     runner = Runner.new(["0", "1", "2", "3", "4"])
     runner.square_date("123085")
-    runner.square_to_offset
-    assert_equal "7", runner.a_2
-    assert_equal "2", runner.b_2 #don't need to make instance here
+    offsets = runner.square_to_offset
+    assert_equal "7", offsets[0]
+    assert_equal "2", offsets[1] #don't need to make instance here
   end
 
 
 #two ABCD numbers are added together
   def test_add_two_ABCD_numbers_together
     final_a = Runner.new(["0", "1", "2", "3", "4"])
-    final_a.key_to_abcd
+    many_as = final_a.key_to_abcd
     final_a.square_date("123085")
-    final_a.square_to_offset
-    final_a.add_abcds
+    date_rotations = final_a.square_to_offset
+    final_a.add_abcds(many_as, date_rotations)
     #assert_equal 8, final_a.rotation_a
     assert_equal 39, final_a.rotation_d
     #in order for rotation_a to happen, all these other methods need to happen
@@ -81,31 +83,39 @@ class EnigmaTest < Minitest::Test
   def test_organizes_character_message_in_ABCD_format
     # skip
     message = Runner.new(["0", "1", "2", "3", "4"])
-    message.key_to_abcd
+    many_as = message.key_to_abcd
     message.square_date("123085")
-    message.square_to_offset
-    message.add_abcds
+    date_rotations = message.square_to_offset
+    message.add_abcds(many_as, date_rotations)
     message.encrypt("apple")
     message.abcd_assignment("apple")
     assert_equal ["0a", "15b", "15c", "11d", "4a"], message.abcd_assignment("apple")
   end
 
-meta word: true
+
   def test_characters_have_abcd_deleted
     message = Runner.new(["0", "1", "2", "3", "4"])
-    message.key_to_abcd
-    message.square_date("123085")
-    message.square_to_offset
-    message.add_abcds
+    message.addition_manager("123085")
     message.encrypt("apple")
     message.abcd_assignment("apple")
     assert_equal ["8", "29", "40", "50", "12"], message.add_abcds_again_rotate
   end
 #message is converted into encrytped message using remainder of 39 character system
+
   def test_message_is_encrypted_thru_39_character_system
-    skip
-    numbered_message = ["57", "31", "71", "26", "52", "21"]
-    assert_equal ["s", "7", "0", "n", "r"], numbered_message.numbers_to_letters
+    # skip
+    message = Runner.new(["0", "1", "2", "3", "4"])
+    message.addition_manager("123085")
+    message.encrypt("apple")
+    message.abcd_assignment("apple")
+    message.add_abcds_again_rotate
+    assert_equal ["i", "3", "b", "l", "m"], message.numbers_to_letters(["8", "29", "40", "50", "12"])
+  end
+
+  def test_decrypts_encrypted_message
+    # skip
+    message = Runner.new(["0", "1", "2", "3", "4"])
+    assert_equal "apple", message.decrypt(["i", "3", "b", "l", "m"])
   end
 
 end
