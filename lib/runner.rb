@@ -1,5 +1,6 @@
 require_relative 'key_generating_machine'
 
+
 class Runner
   attr_accessor :key_array, :date, :a_1, :a_2, :b_1, :b_2, :c_1, :c_2, :d_1, :d_2, :new_date, :rotation_a, :rotation_b, :rotation_c, :rotation_d, :encrypted_array
 
@@ -46,45 +47,59 @@ class Runner
 #gsub in ruby docs?
 
   def abcd_assignment(message)
-     #if instance variable (encrypted message) and not defined
+
+  #puts @encrypted_message gives you "0 15 15 11 4"
+    index = 0
+    index_2 = -1
    rotation_array =["a", "b", "c", "d"]
     @encrypted_array = @encrypted_message.split(" ")
-    index = 0
-    index_2 = 0
+    #puts @encrypted_array.inspect gives ["0", "15", "15", "11", "4"]
+    @new_encrypted_array = []
       while index < @encrypted_array.length
-        @encrypted_array[index] = @encrypted_array[index].insert( -1, rotation_array[index])
-        index +=1
-        if index_2 == 4
+        if index_2 == 3
           index_2 = 0
         else
           index_2 +=1
         end
+        @new_encrypted_array << (@encrypted_array[index] += rotation_array[index_2])
+        index +=1
         # index_2 == 4 ? index_2 = 0 : index_2 += 1
       end
+      @new_encrypted_array
   end
 
   def add_abcds_again_rotate
     large_index = 0
     index = 0
     @final_offsets = []
-
-    if large_index < @encrypted_array.length
+    while large_index < @encrypted_array.length
       if @encrypted_array[index].include?("a")
         temp = @encrypted_array[index].delete("a")
         temp = temp.to_i + @rotation_a
+        temp = temp.to_s
+        @final_offsets.push(temp)
       elsif @encrypted_array[index].include?("b")
         temp = @encrypted_array[index].delete("b")
         temp = temp.to_i + @rotation_b
+        temp = temp.to_s
+        @final_offsets.push(temp)
       elsif @encrypted_array[index].include?("c")
         temp = @encrypted_array[index].delete("c")
         temp = temp.to_i + @rotation_c
+        temp = temp.to_s
+        @final_offsets.push(temp)
       else
         temp = @encrypted_array[index].delete("d")
         temp = temp.to_i + @rotation_d
+        temp = temp.to_s
+        @final_offsets.push(temp)
       end
-      @final_offsets.push(temp)
+
+      # @final_offsets.push(temp)
       large_index += 1
+      index += 1
     end
+    @final_offsets
   end
 
   def numbers_to_letters(final_offsets)

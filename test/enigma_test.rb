@@ -1,4 +1,5 @@
 gem 'minitest', '~> 5.2'
+require_relative 'test_helper'
 require 'minitest/autorun'
 require 'minitest/pride'
 require_relative '../lib/key_generating_machine'
@@ -64,9 +65,9 @@ class EnigmaTest < Minitest::Test
 
   #A letter is properly organized into its number equivalent
   def test_properly_organizes_a_character_into_numbers
-    skip
+    # skip
     message = Runner.new(["0", "1", "2", "3", "4"])
-    assert_equal "0 ", message.encrypt("a")
+    assert_equal "0", message.encrypt("a")
   end
 
   #A message is properly organized into its number equivalent
@@ -78,7 +79,7 @@ class EnigmaTest < Minitest::Test
 
 #message in character form is organized in ABCD format
   def test_organizes_character_message_in_ABCD_format
-    skip
+    # skip
     message = Runner.new(["0", "1", "2", "3", "4"])
     message.key_to_abcd
     message.square_date("123085")
@@ -86,9 +87,20 @@ class EnigmaTest < Minitest::Test
     message.add_abcds
     message.encrypt("apple")
     message.abcd_assignment("apple")
-    assert_equal ["57", "31", "71", "26", "52", "21"], message.add_abcds_again_rotate
+    assert_equal ["0a", "15b", "15c", "11d", "4a"], message.abcd_assignment("apple")
   end
 
+meta word: true
+  def test_characters_have_abcd_deleted
+    message = Runner.new(["0", "1", "2", "3", "4"])
+    message.key_to_abcd
+    message.square_date("123085")
+    message.square_to_offset
+    message.add_abcds
+    message.encrypt("apple")
+    message.abcd_assignment("apple")
+    assert_equal ["8", "29", "40", "50", "12"], message.add_abcds_again_rotate
+  end
 #message is converted into encrytped message using remainder of 39 character system
   def test_message_is_encrypted_thru_39_character_system
     skip
