@@ -69,35 +69,18 @@ class Runner
   end
 
   def add_abcds_again_rotate
-    large_index = 0
-    index = 0
     @final_offsets = []
-    while large_index < @encrypted_array.length
-      if @encrypted_array[index].include?("a")
-        temp = @encrypted_array[index].delete("a")
-        temp = temp.to_i + @rotation_a
-        temp = temp.to_s
-        @final_offsets.push(temp)
-      elsif @encrypted_array[index].include?("b")
-        temp = @encrypted_array[index].delete("b")
-        temp = temp.to_i + @rotation_b
-        temp = temp.to_s
-        @final_offsets.push(temp)
-      elsif @encrypted_array[index].include?("c")
-        temp = @encrypted_array[index].delete("c")
-        temp = temp.to_i + @rotation_c
-        temp = temp.to_s
-        @final_offsets.push(temp)
+    @encrypted_array.each do |letter|
+      if letter.include?("a")
+        temp = (letter.delete("a").to_i + @rotation_a).to_s
+      elsif letter.include?("b")
+        temp = (letter.delete("b").to_i + @rotation_b).to_s
+      elsif letter.include?("c")
+        temp = (letter.delete("c").to_i + @rotation_c).to_s
       else
-        temp = @encrypted_array[index].delete("d")
-        temp = temp.to_i + @rotation_d
-        temp = temp.to_s
-        @final_offsets.push(temp)
+        temp = (letter.delete("d").to_i + @rotation_d).to_s
       end
-
-      # @final_offsets.push(temp)
-      large_index += 1
-      index += 1
+      @final_offsets.push(temp)
     end
     @final_offsets
   end
