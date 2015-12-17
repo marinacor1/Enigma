@@ -1,0 +1,4 @@
+file_reader = FileReader.new
+output_string = "victory"
+
+file_reader.writes(output_string)
