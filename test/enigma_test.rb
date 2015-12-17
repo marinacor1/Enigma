@@ -56,10 +56,10 @@ class EnigmaTest < Minitest::Test
     refute_equal Time, runner.date_to_number_format.class
   end
 
-  def test_date_is_converted_to_number_form
+  def test_date_is_four_digits_long
     #skip
     runner = Runner.new(["0", "1", "2", "3", "4"])
-    refute_equal Time, runner.date_to_number_format.class
+    refute_equal 4, runner.date_to_number_format.length
   end
 
 #Date is squared
@@ -77,29 +77,60 @@ class EnigmaTest < Minitest::Test
     offsets = runner.square_to_offset(new_date)
     assert_equal "7", offsets[0]
     assert_equal "2", offsets[1]
+    assert_equal "2", offsets[2]
+    assert_equal "5", offsets[3]
   end
 
+  def test_add_two_A_numbers_together
+    final_a = Runner.new(["0", "1", "2", "3", "4"])
+    key_rotations = final_a.key_to_abcd
+    new_date = final_a.square_date("123085")
+    date_rotations = final_a.square_to_offset(new_date)
+    final_abcd = final_a.add_abcds(key_rotations, date_rotations)
+    assert_equal 8, final_abcd[0]
+  end
 
-#two ABCD numbers are added together
-  def test_add_two_ABCD_numbers_together
+  def test_add_two_B_numbers_together
+    final_a = Runner.new(["0", "1", "2", "3", "4"])
+    key_rotations = final_a.key_to_abcd
+    new_date = final_a.square_date("123085")
+    date_rotations = final_a.square_to_offset(new_date)
+    final_abcd = final_a.add_abcds(key_rotations, date_rotations)
+    assert_equal 14, final_abcd[1]
+  end
+
+  def test_add_two_C_numbers_together
+    final_a = Runner.new(["0", "1", "2", "3", "4"])
+    key_rotations = final_a.key_to_abcd
+    new_date = final_a.square_date("123085")
+    date_rotations = final_a.square_to_offset(new_date)
+    final_abcd = final_a.add_abcds(key_rotations, date_rotations)
+    assert_equal 25, final_abcd[2]
+  end
+
+  def test_add_two_D_numbers_together
     final_a = Runner.new(["0", "1", "2", "3", "4"])
     key_rotations = final_a.key_to_abcd
     new_date = final_a.square_date("123085")
     date_rotations = final_a.square_to_offset(new_date)
     final_abcd = final_a.add_abcds(key_rotations, date_rotations)
     assert_equal 39, final_abcd[3]
-
   end
 
-  #A letter is properly organized into its number equivalent
-  def test_properly_organizes_a_character_into_numbers
+  def test_properly_organizes_a_letter_into_numbers
     # skip
     message = Runner.new(["0", "1", "2", "3", "4"])
     assert_equal "0", message.encrypt("a")
   end
 
-  #A message is properly organized into its number equivalent
   def test_properly_organizes_a_message_into_numbers
+    # skip
+    message = Runner.new(["0", "1", "2", "3", "4"])
+    assert_equal "0 13 0 15 15 11 4 8 18 6 17 4 0 19", message.encrypt("an apple is great")
+  end
+
+  #A message is properly organized into its number equivalent
+  def test_properly_organizes_a_word_into_numbers
     # skip
     message = Runner.new(["0", "1", "2", "3", "4"])
     assert_equal "0 15 15 11 4", message.encrypt("apple")
@@ -113,14 +144,14 @@ class EnigmaTest < Minitest::Test
   end
 
 
-  def test_characters_have_abcd_deleted
+  def test_characters_have_abcd_deleted_and_rotates
     message = Runner.new(["0", "1", "2", "3", "4"])
     message.abcd_assignment(message.encrypt("apple"))
     key_rotations = message.key_to_abcd
     date_rotations =message.square_to_offset("123085")
     final_abcd = message.add_abcds(key_rotations, date_rotations)
     new_encrypted_array = message.abcd_assignment(message.encrypt("apple"))
-    message.add_abcds_again_rotate(final_abcd, new_encrypted_array)
+    assert_equal ["4", "27", "46", "50", "8"], message.add_abcds_again_rotate(final_abcd, new_encrypted_array)
   end
 
 
@@ -129,12 +160,6 @@ class EnigmaTest < Minitest::Test
     message = Runner.new(["0", "1", "2", "3", "4"])
     message.addition_manager("123085")
     assert_equal ["i", "3", "b", "l", "m"], message.numbers_to_letters(["8", "29", "40", "50", "12"])
-  end
-
-  def test_decrypts_encrypted_message
-    # skip
-    message = Runner.new(["0", "1", "2", "3", "4"])
-    assert_equal "apple", message.decrypt(["i", "3", "b", "l", "m"], [8, 14, 25, 39])
   end
 
 
