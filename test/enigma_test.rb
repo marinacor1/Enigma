@@ -6,6 +6,8 @@ require 'pry'
 require_relative '../lib/key_generating_machine'
 require_relative '../lib/runner'
 require 'simplecov'
+require '../lib/encrypt'
+require '../lib/decrypt'
 SimpleCov.start
 
 class EnigmaTest < Minitest::Test
@@ -20,14 +22,40 @@ class EnigmaTest < Minitest::Test
   end
 
 #original five digit number is converted to ABCD format
-  def test_converts_five_digit_key_to_ABCD_format
+  def test_converts_five_digit_key_to_A_format
     runner = Runner.new(["0", "1", "2", "3", "4"])
-    many_as = runner.key_to_abcd
-    a_1 = many_as[0]
+    key_rotations = runner.key_to_abcd
+    a_1 = key_rotations[0]
     assert_equal "01", a_1
   end
 
+  def test_converts_five_digit_key_to_b_format
+    runner = Runner.new(["0", "1", "2", "3", "4"])
+    key_rotations = runner.key_to_abcd
+    b_1 = key_rotations[1]
+    assert_equal "12", b_1
+  end
+
+  def test_converts_five_digit_key_to_c_format
+    runner = Runner.new(["0", "1", "2", "3", "4"])
+    key_rotations = runner.key_to_abcd
+    c_1 = key_rotations[2]
+    assert_equal "23", c_1
+  end
+
+  def test_converts_five_digit_key_to_d_format
+    runner = Runner.new(["0", "1", "2", "3", "4"])
+    key_rotations = runner.key_to_abcd
+    d_1 = key_rotations[3]
+    assert_equal "34", d_1
+  end
 #Calculates date by number
+  def test_date_is_converted_to_number_form
+    #skip
+    runner = Runner.new(["0", "1", "2", "3", "4"])
+    refute_equal Time, runner.date_to_number_format.class
+  end
+
   def test_date_is_converted_to_number_form
     #skip
     runner = Runner.new(["0", "1", "2", "3", "4"])
@@ -96,7 +124,7 @@ class EnigmaTest < Minitest::Test
   end
 
 
-  def test_message_is_encrypted_thru_39_character_system
+  def test_addition_manager_organizes_all_methods
     # skip
     message = Runner.new(["0", "1", "2", "3", "4"])
     message.addition_manager("123085")
@@ -108,5 +136,6 @@ class EnigmaTest < Minitest::Test
     message = Runner.new(["0", "1", "2", "3", "4"])
     assert_equal "apple", message.decrypt(["i", "3", "b", "l", "m"], [8, 14, 25, 39])
   end
+
 
 end
